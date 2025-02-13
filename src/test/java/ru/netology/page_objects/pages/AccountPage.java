@@ -3,19 +3,15 @@ package ru.netology.page_objects.pages;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
-import lombok.Value;
-import org.junit.jupiter.api.Assertions;
 
 import static com.codeborne.selenide.Selenide.*;
 
 public class AccountPage {
-    private final SelenideElement header = $x("//*[@data-test-id='dashboard'][contains(text(),'Личный кабинет')]");
-    ;
+    private final SelenideElement header = $x("//*[@data-test-id='dashboard']");
     private ElementsCollection cards = $$(".list__item div");
-    ;
 
     public AccountPage() {
-        header.shouldBe(Condition.visible);
+        header.shouldBe(Condition.visible).shouldHave(Condition.text("Личный кабинет"));
     }
 
     public int getCardBalance(String id) {
@@ -29,11 +25,6 @@ public class AccountPage {
         String value = text.substring(startIndex + "баланс: ".length(), finishIndex);
         return Integer.parseInt(value);
     }
-
-//    public String getCardNumber(String id) {
-//        SelenideElement card = cards.findBy(Condition.attributeMatching("data-test-id", id));
-//        return extractCardNumber(card.getText());
-//    }
 
     public AddToCardPage initiateTransferToCard(String id) {
         SelenideElement card = cards.findBy(Condition.attribute("data-test-id", id));

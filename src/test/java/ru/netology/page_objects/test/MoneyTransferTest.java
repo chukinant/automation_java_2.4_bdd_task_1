@@ -1,8 +1,10 @@
 package ru.netology.page_objects.test;
 
 import com.codeborne.selenide.Selenide;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.netology.page_objects.data.API_Helper;
 import ru.netology.page_objects.data.DataHelper;
 import ru.netology.page_objects.pages.LoginPage;
 import ru.netology.page_objects.pages.AccountPage;
@@ -28,6 +30,12 @@ public class MoneyTransferTest {
         secondCardInfo = DataHelper.getSecondCardInfo();
         firstCardBalance = accountPage.getCardBalance(firstCardInfo.getId());
         secondCardBalance = accountPage.getCardBalance(secondCardInfo.getId());
+    }
+
+    @AfterEach
+    void resetBalances() {
+        var apiHelper = new API_Helper();
+        apiHelper.resetCardsBalances();
     }
 
     @Test
@@ -91,6 +99,15 @@ public class MoneyTransferTest {
         int amount = 1;
         var addToCardPage = accountPage.initiateTransferToCard(firstCardInfo.getId());
         addToCardPage.emptyAmountFieldTransfer(secondCardInfo.getNumber(), amount);
+
+        addToCardPage.findErrorMsg();
+    }
+
+    @Test
+    void shouldNotTransferToInvalidCard() {
+        int amount = 1;
+        var addToCardPage = accountPage.initiateTransferToCard(firstCardInfo.getId());
+        addToCardPage.invalidCardFromTransfer(secondCardInfo.getNumber(), amount);
 
         addToCardPage.findErrorMsg();
     }
